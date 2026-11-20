@@ -27,7 +27,7 @@ jobs:
               repo: context.repo.repo,
               deployment_id: context.payload.deployment.id,
               state: process.env.DEPLOYMENT_STATE,
-              log_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              log_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/commit/${context.sha}/checks`,
             })
       - name: Initialize environment variables
         env:
@@ -98,7 +98,7 @@ jobs:
               repo: context.repo.repo,
               deployment_id: context.payload.deployment.id,
               state: process.env.DEPLOYMENT_STATE,
-              log_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              log_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/commit/${context.sha}/checks`,
             })
       - name: Update deployment status (failure)
         if: failure()
@@ -112,5 +112,5 @@ jobs:
               repo: context.repo.repo,
               deployment_id: context.payload.deployment.id,
               state: process.env.DEPLOYMENT_STATE,
-              log_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              log_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/commit/${context.sha}/checks`,
             })
