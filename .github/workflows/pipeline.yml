@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     container: miaplatform/mlp:2.5.0
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # Deployment statuses are reported to the Console deployment that triggered this run; GitHub then
       # notifies Console through the deployment_status webhook.
       - name: Update deployment status (pending)
