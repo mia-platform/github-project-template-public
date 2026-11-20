@@ -13,13 +13,22 @@ jobs:
     container: miaplatform/mlp:2.5.0
     steps:
       - uses: actions/checkout@v4
+      # Deployment statuses are reported to the Console deployment that triggered this run; GitHub then
+      # notifies Console through the deployment_status webhook.
       - name: Update deployment status (pending)
         if: success()
-        uses: chrnorm/deployment-status@v2
+        uses: actions/github-script@v9
+        env:
+          DEPLOYMENT_STATE: pending
         with:
-          token: '${{ github.token }}'
-          state: 'pending'
-          deployment-id: ${{ github.event.deployment.id }}
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: context.payload.deployment.id,
+              state: process.env.DEPLOYMENT_STATE,
+              log_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            })
       - name: Initialize environment variables
         env:
           KUBE_NAMESPACE: ${{ github.event.deployment.payload.variables.KUBE_NAMESPACE }}
@@ -79,15 +88,29 @@ jobs:
           echo "Cleanup completed"
       - name: Update deployment status (success)
         if: success()
-        uses: chrnorm/deployment-status@v2
+        uses: actions/github-script@v9
+        env:
+          DEPLOYMENT_STATE: success
         with:
-          token: '${{ github.token }}'
-          state: 'success'
-          deployment-id: ${{ github.event.deployment.id }}
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: context.payload.deployment.id,
+              state: process.env.DEPLOYMENT_STATE,
+              log_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            })
       - name: Update deployment status (failure)
         if: failure()
-        uses: chrnorm/deployment-status@v2
+        uses: actions/github-script@v9
+        env:
+          DEPLOYMENT_STATE: failure
         with:
-          token: '${{ github.token }}'
-          state: 'failure'
-          deployment-id: ${{ github.event.deployment.id }}
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: context.payload.deployment.id,
+              state: process.env.DEPLOYMENT_STATE,
+              log_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            })
